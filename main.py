@@ -13,6 +13,7 @@ from functools import wraps
 from sqlalchemy.ext.declarative import declarative_base
 from flask_gravatar import Gravatar
 import os
+from threading import Lock
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
@@ -33,6 +34,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 Base = declarative_base()
+
 
 
 ##CONFIGURE TABLES
@@ -72,7 +74,11 @@ class Comment(db.Model):
 
     text = db.Column(db.Text, nullable=False)
 
-db.create_all()
+
+##Lock the thread so that data tables can be created without errors. must import threading
+lock = Lock()
+with lock:
+    db.create_all()
 
 @login_manager.user_loader
 def load_user(user_id):
