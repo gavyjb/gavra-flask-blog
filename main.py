@@ -76,9 +76,9 @@ class Comment(db.Model):
 
 
 ##Lock the thread so that data tables can be created without errors. must import threading
-lock = Lock()
-with lock:
-    db.create_all()
+# lock = Lock()
+# with lock:
+#     db.create_all()
 
 @login_manager.user_loader
 def load_user(user_id):
